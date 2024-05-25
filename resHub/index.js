@@ -19,7 +19,7 @@ app.use(
 app.use(bodyParser.json());
 
 // setup mongose connection variable
-mongoose.connect("mongdb://localhost/resHub");
+mongoose.connect("mongodb://localhost/resHub");
 const db = mongoose.connection;
 
 // setup default url
