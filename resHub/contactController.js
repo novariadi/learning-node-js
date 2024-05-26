@@ -20,7 +20,7 @@ exports.index = function (req, res) {
     });
 };
 
-// handle creat contact
+// handle create contact
 exports.new = function (req, res) {
   let contact = new Contact({
     name: req.body.name,
