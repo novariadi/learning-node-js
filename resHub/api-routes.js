@@ -8,16 +8,20 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post("/", (req, res) => {
-  res.send("create data berhasil");
-});
+// import contact controller
+const contactController = require('./contactController');
 
-router.put("/", (req, res) => {
-  res.send("Update data berhasil");
-});
+// contact routes
+router.route('/contacts')
+  .get(contactController.index)
+  .post(contactController.new);
 
-router.delete("/", (req, res) => {
-  res.send("delete data berhasil");
-});
+router.route('contacts/:contact:id')
+  .get(contactController.view)
+  .patch(contactController.update)
+  .put(contactController.update)
+  .delete(contactController.delete)
 
+
+// export API routers
 module.exports = router;

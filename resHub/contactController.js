@@ -3,101 +3,128 @@ const Contact = require("./contactModel");
 
 // handle index action
 exports.index = function (req, res) {
-  Contact.get(function (err, contacts) {
-    if (err) {
+  Contact.get(10) // limit model contact 10
+    .then((contact) => {
       res.json({
-        status: "error",
-        message: err
+        status: "success",
+        message: "contact retrieved successfully",
+        data: contact
       });
-    }
-
-    res.json({
-      status: "success",
-      message: "Contacts retrieved successfully",
-      data: contacts
+    })
+    .catch((error) => {
+      res.status(500).json({
+        status: "error",
+        message: "error retrieved contacts",
+        error: error.message
+      });
     });
-  });
 };
 
 // handle creat contact
 exports.new = function (req, res) {
-  let contact = new Contact();
-  contact.name = req.body.name ? req.body.name : contact.name;
-  contact.gender = req.body.gender;
-  contact.email = req.body.email;
-  contact.phone = req.body.phone;
-  contact.save(function (err) {
-    if (err) {
-      res.json({
-        status: "error",
-        message: err
-      });
-    }
-
-    res.json({
-      status: "success",
-      message: "new Contact Created!",
-      data: contact
-    });
+  let contact = new Contact({
+    name: req.body.name,
+    gender: req.body.gender,
+    email: req.body.email,
+    phone: req.body.phone
   });
+
+  contact
+    .save()
+    .then((savedContact) => {
+      res.json({
+        status: "success",
+        message: "New Contact Created!",
+        data: savedContact
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        status: "error",
+        message: "Error creating new contact",
+        error: error.message
+      });
+    });
 };
 
 // handle view contact info
 exports.view = function (req, res) {
-  Contact.findById(req.params.contact_id, function (err, contact) {
-    if (err) {
-      res.json({
-        status: "error",
-        message: err
-      });
-    }
+  Contact.findById(req.params.contact_id)
+    .then((contact) => {
+      if (!contact) {
+        return res.status(404).json({
+          status: "error",
+          message: "contact not found"
+        });
+      }
 
-    res.json({
-      status: "success",
-      message: "contact detail loading...",
-      data: contact
+      res.json({
+        status: "success",
+        message: "contact detail loaded",
+        data: contact
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        status: "error",
+        message: "Error loading contact detail",
+        error: error.message
+      });
     });
-  });
 };
 
 // handle update contact info
 exports.update = function (req, res) {
-  Contact.findById(req.params.contact_id, function (err, contact) {
-    if (err) {
-      res.json({
-        status: "error",
-        message: err
-      });
-    }
-    contact.name = req.body.name ? req.body.name : contact.name;
-    contact.gender = req.body.gender;
-    contact.email - req.body.email;
-    contact.phone = req.body.phone;
-    contact.save(function (err) {
-      if (err) {
-        res.json({
+  Contact.findById(req.params.contact_id)
+    .then((contact) => {
+      if (!contact) {
+        return res.status(404).json({
           status: "error",
-          message: err
+          message: "contact not found"
         });
       }
+      contact.name = req.body.name ? req.body.name : contact.name;
+      contact.gender = req.body.gender;
+      contact.email = req.body.email;
+      contact.phone = req.body.phone;
+      return contact.save();
+    })
+    .then((updatedContact) => {
       res.json({
         status: "success",
         message: " Contact Info Updated",
-        data: contact
+        data: updatedContact
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        status: "error",
+        message: "Error updating contact info",
+        error: error.message
       });
     });
-  });
 };
 
 // handle delete contact info
 exports.delete = function (req, res) {
-  Contact.remove({ _id: req.params.contact_id }, function (err, contact) {
-    if (err) {
-      res.send(err);
-    }
-    res.json({
-      status: "success",
-      message: " delete Contact Success"
+  Contact.findByIdAndRemove(req.params.contact_id)
+    .then((deletedContact) => {
+      if (!deletedContact) {
+        return res.status(404).json({
+          status: "error",
+          message: "contact not found"
+        });
+      }
+      res.json({
+        status: "success",
+        message: "Contact deleted successfully"
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        status: "error",
+        message: "error deleting contact",
+        error: error.message
+      });
     });
-  });
 };
