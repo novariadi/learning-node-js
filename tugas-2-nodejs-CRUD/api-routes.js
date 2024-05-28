@@ -17,6 +17,11 @@ router.route('/siswa')
     .get(siswaController.index)
     .post(siswaController.new)
 
+router.route('/siswa/:id')
+    .get(siswaController.view)
+    .put(siswaController.update)
+    .patch(siswaController.update)
+    .delete(siswaController.delete)
 
 // export API routers
 module.exports = router;

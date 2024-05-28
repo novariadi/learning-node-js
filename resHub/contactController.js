@@ -80,10 +80,10 @@ exports.update = function (req, res) {
       if (!contact) {
         return res.status(404).json({
           status: "error",
-          message: "contact not found"
+          message: "ID not found"
         });
       }
-      contact.name = req.body.name ? req.body.name : contact.name;
+      contact.name = req.body.name;
       contact.gender = req.body.gender;
       contact.email = req.body.email;
       contact.phone = req.body.phone;
